@@ -5,32 +5,25 @@ const refs = getRefs();
 const myCat = new CatAPI();
 
 enableElement(refs.loader)
-
+    
 myCat.fetchBreeds()
     .then((res) => {
         addSelectOptions(res)
         enableElement(refs.select)
     })
-    .catch((err) => {
-        console.log(`Error cought = ` + err)
-        enableElement(refs.error)
-    })
-    .finally(() => {
-        disableElement(refs.loader)
-    })
+    .catch(handleError)
+    .finally(() => disableElement(refs.loader))
 
 refs.select.addEventListener('change', onChange)
 
 function onChange(e) {
-    enableElement(refs.loader)
+    enableElement(refs.loader);
+    refs.container.innerHTML = '';
     myCat.fetchCatByBreed(e.target.value)
     .then(picture => {
         refs.container.innerHTML = myCat.createMarkup(picture[0]);
     })
-        .catch((err) => {
-            console.log(`Error cought = ` + err)
-            enableElement(refs.error)
-        })
+    .catch(handleError)
     .finally(()=> disableElement(refs.loader))
 }    
 
@@ -57,4 +50,9 @@ function disableElement(element) {
 
 function enableElement(element) {
     element.classList.remove('disable-js');
+}
+
+function handleError(err) {
+    console.log(`Error cought = ` + err)
+    enableElement(refs.error)
 }
