@@ -43,6 +43,13 @@ function onChange(e) {
 
 function addSelectOptions(array) {
     const optionsArray = [];
+    optionsArray.push({
+        ['text']: 'Choose one of...',
+        ['value']: '',
+        ['disabled']: true,
+        ['display']: false,
+
+    })
     array.forEach(obj => {
         const pair = {
             ['text']: obj.name,
