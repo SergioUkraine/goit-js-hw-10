@@ -16,7 +16,6 @@ class CatAPI {
             .then(result => {   
                 return result.json()
             })
-            .finally()
     }
 
     fetchCatByBreed(breedId) {
@@ -25,7 +24,6 @@ class CatAPI {
             .then(result => {
                 return result.json()
             })
-            .finally()
     }
 
     createMarkup(obj) {

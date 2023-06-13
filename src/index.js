@@ -1,47 +1,56 @@
 import { CatAPI } from "./js/cat-api";
 import getRefs from "./js/get-refs";
+import SlimSelect from 'slim-select';
+import { Report } from 'notiflix/build/notiflix-report-aio';
 
 const refs = getRefs();
 const myCat = new CatAPI();
+let select;
 
-enableElement(refs.loader)
-    
+disableElement(refs.select);
+enableElement(refs.loader);
+
 myCat.fetchBreeds()
-    .then((res) => {
-        addSelectOptions(res)
-        enableElement(refs.select)
-    })
+    .then(fillSelect)
     .catch(handleError)
-    .finally(() => disableElement(refs.loader))
-
-refs.select.addEventListener('change', onChange)
+    .finally(handleFinally)
+        
+function fillSelect(r) {
+    select = new SlimSelect({
+        select: refs.select,
+        settings: {
+            showSearch: false,
+        },
+        events: {
+            beforeChange: onChange,
+        },
+    })
+    
+    select.setData(addSelectOptions(r))
+}
 
 function onChange(e) {
     enableElement(refs.loader);
     refs.container.innerHTML = '';
-    myCat.fetchCatByBreed(e.target.value)
-    .then(picture => {
-        refs.container.innerHTML = myCat.createMarkup(picture[0]);
-    })
-    .catch(handleError)
-    .finally(()=> disableElement(refs.loader))
+
+    myCat.fetchCatByBreed(e[0].value)
+        .then(catInfo => {
+            refs.container.innerHTML = myCat.createMarkup(catInfo[0]);
+        })
+        .catch(handleError)
+        .finally(handleFinally)
 }    
 
 function addSelectOptions(array) {
-    refs.select.innerHTML = '<option value="">Select option...</option>';
+    const optionsArray = [];
     array.forEach(obj => {
-        const option = document.createElement('option');
-        option.value = obj.id;
-        option.textContent = obj.name;
-        refs.select.appendChild(option);
+        const pair = {
+            ['text']: obj.name,
+            ['value']: obj.id,
+        };
+        optionsArray.push(pair);
     });
-
-    /************************ */
-    const option = document.createElement('option');
-    option.value = 'asdfghjkl';
-    option.textContent = 'Wrong option'
-    refs.select.appendChild(option);
-    /************************ */
+    return optionsArray;
 }
 
 function disableElement(element) {
@@ -53,6 +62,18 @@ function enableElement(element) {
 }
 
 function handleError(err) {
-    console.log(`Error cought = ` + err)
-    enableElement(refs.error)
+    select.destroy();
+    Report.failure(
+        'Oops!',
+        'Something went wrong! Try reloading the page!',
+        'Reload!',
+        function () {
+            window.location.reload();
+        }
+    );
+    console.log('Error caught: ' + err);
 }
+
+function handleFinally() {
+    disableElement(refs.loader);
+} 
