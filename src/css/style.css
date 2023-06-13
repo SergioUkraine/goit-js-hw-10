@@ -1,0 +1,43 @@
+.disable-js {
+    display: none;
+}
+
+
+
+.cat-info{
+    display: flex;
+
+    font-family:Verdana, Geneva, Tahoma, sans-serif
+}
+
+.cat-info__image-thumb{
+    padding-top: 20px;
+}
+
+.cat-info__image {
+    display: block;
+}
+
+.cat-info__info-thumb{
+    padding: 20px;
+}
+
+
+.cat-info__title{
+    margin: 0;
+    padding: 0;
+}
+
+.cat-info__description{
+    font-size: 18px;
+    text-indent: 2em;
+    text-align: justify;
+}
+
+.cat-info__temperament{
+    font-size: 18px;
+}
+
+.cat-info__temperament--bold{
+    font-weight: 700;
+}
